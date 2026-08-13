@@ -1,8 +1,9 @@
 name: "Update dsh"
 on:
   schedule:
-    # Daily; dsh is in developer preview and releases often
-    - cron: '0 3 * * *'
+    # Hourly; dsh is in developer preview and releases often. Runs that find
+    # no new version exit without committing, so build.yml is not triggered.
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
