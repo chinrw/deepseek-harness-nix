@@ -37,6 +37,12 @@ in
 
   dontNpmBuild = true;
 
+  # Live profile reload needs Node internals; NODE_OPTIONS rejects this flag.
+  postInstall = ''
+    makeWrapper ${nodejs_24}/bin/node "$out/bin/dsh" \
+      --add-flags "--expose-internals $out/lib/node_modules/@deepseek-ai/dsh/lib/bin.js"
+  '';
+
   meta = {
     description = "DeepSeek Harness (dsh) - open-source agent harness by DeepSeek AI";
     homepage = "https://github.com/deepseek-ai/deepseek-harness";

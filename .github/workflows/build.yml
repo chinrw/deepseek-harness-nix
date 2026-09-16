@@ -49,3 +49,6 @@ jobs:
 
     - name: Test dsh
       run: ./result/bin/dsh --version
+
+    - name: Test web startup
+      run: python3 scripts/test-web.py ./result/bin/dsh
