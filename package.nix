@@ -7,9 +7,9 @@
 }:
 
 let
-  version = "0.1.5-rc.3";
-  srcHash = "sha256-dQHxFoYIcF+0Qnsk+qKoHxtIwzNfAogpUatA+lkFxsU=";
-  npmDepsHash = "sha256-j0/g5hdhAkfJOGRi/KrT2HMG462yhbtRMNQ4rcG+4zw=";
+  version = "0.1.7-rc.2";
+  srcHash = "sha256-G7Y+cbu1J/0//C5BAxuoZHQv8+QmZDHgNK0w2fV6H10=";
+  npmDepsHash = "sha256-Ks0lduLy+PEfJ3xxnKFTSk6qseLIkb3MMkIMSMqSEnk=";
 in
 (buildNpmPackage.override { nodejs = nodejs_24; }) {
   pname = "deepseek-harness";
