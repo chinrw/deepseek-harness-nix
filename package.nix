@@ -4,12 +4,15 @@
 , nodejs_24
 , python3
 , jq
+, callPackage
 }:
 
 let
   version = "0.2.0-rc.2";
   srcHash = "sha256-j7BVcCzXrlDvKn345vpNjmHsvfrkQJpJj63XT1pksdg=";
   npmDepsHash = "sha256-2ti/GACxgIG4j8lJqDHzM5yI3kDxp0KQLYqO/37ZgOM=";
+  # Runtime Node only. See node-bin.nix for why nixpkgs nodejs_24 cannot boot dsh.
+  node = callPackage ./node-bin.nix { };
 in
 (buildNpmPackage.override { nodejs = nodejs_24; }) {
   pname = "deepseek-harness";
@@ -39,8 +42,20 @@ in
 
   # Live profile reload needs Node internals; NODE_OPTIONS rejects this flag.
   postInstall = ''
-    makeWrapper ${nodejs_24}/bin/node "$out/bin/dsh" \
+    makeWrapper ${node}/bin/node "$out/bin/dsh" \
       --add-flags "--expose-internals $out/lib/node_modules/@deepseek-ai/dsh/lib/bin.js"
+  '';
+
+  # The web smoke test starts an empty profile, which never loads this addon.
+  # A profile with plugins does, so probe it directly with the runtime Node.
+  doInstallCheck = true;
+  installCheckPhase = ''
+    runHook preInstallCheck
+    ${node}/bin/node -e "
+      require('$out/lib/node_modules/@deepseek-ai/dsh/node_modules/node-addon-require-builtin')
+        .requireBuiltin('internal/modules/esm/loader');
+    "
+    runHook postInstallCheck
   '';
 
   meta = {
