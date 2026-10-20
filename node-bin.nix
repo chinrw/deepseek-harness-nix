@@ -2,6 +2,7 @@
 , stdenv
 , fetchurl
 , autoPatchelfHook
+, patchelf
 }:
 
 # dsh boots through node-addon-require-builtin, which locates Node's internal
@@ -19,6 +20,18 @@ let
   };
   platform = platforms.${stdenv.hostPlatform.system}
     or (throw "node-bin: unsupported system ${stdenv.hostPlatform.system}");
+
+  # patchelf 0.18 and later rewrite this binary into one that segfaults
+  # before main. autoPatchelfHook runs the first patchelf on PATH.
+  patchelf_0_15 = patchelf.overrideAttrs (_: rec {
+    version = "0.15.2";
+    src = fetchurl {
+      url = "https://github.com/NixOS/patchelf/releases/download/${version}/patchelf-${version}.tar.bz2";
+      hash = "sha256-F3RfVkFZyOIo/EEtplogSLhGxLa0Igt3y/IkFuAvLXw=";
+    };
+    patches = [ ];
+    doCheck = false;
+  });
 in
 stdenv.mkDerivation {
   pname = "nodejs-bin";
@@ -29,7 +42,7 @@ stdenv.mkDerivation {
     inherit (platform) hash;
   };
 
-  nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [ autoPatchelfHook ];
+  nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [ patchelf_0_15 autoPatchelfHook ];
   buildInputs = lib.optionals stdenv.hostPlatform.isLinux [ stdenv.cc.cc.lib ];
 
   # The dsh wrapper only runs node itself, so npm and the headers stay out.
