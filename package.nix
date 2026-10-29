@@ -8,9 +8,9 @@
 }:
 
 let
-  version = "0.2.1-rc.2";
-  srcHash = "sha256-/0fTqzTK2lH/opn/5N7aVRHmX8eSE5L9Ugg7ziUvBrw=";
-  npmDepsHash = "sha256-rGyRx96xxTJEI4+uLy6DWMbVCxBVIkg22dnNc9NgAJA=";
+  version = "0.2.1-rc.5";
+  srcHash = "sha256-838T0vJRnk1NrUZA4HkM6LeGIJPIaM/S6HOY2SGNy54=";
+  npmDepsHash = "sha256-lvs94GZp8xABx/lx5Rq0Y/W6oujn/y+S4+GloJdXVqQ=";
   # Runtime Node only. See node-bin.nix for why nixpkgs nodejs_24 cannot boot dsh.
   node = callPackage ./node-bin.nix { };
 in
